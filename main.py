@@ -1,5 +1,7 @@
 from database.conexion import conectar
+from views.login import Login
 
+Login()
 try:
     conexion = conectar()
     print("Conexión exitosa")
