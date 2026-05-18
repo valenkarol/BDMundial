@@ -1,0 +1,3 @@
+from reports.reporte_usuarios import generar_reporte_usuarios
+
+generar_reporte_usuarios()

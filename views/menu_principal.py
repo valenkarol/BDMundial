@@ -7,6 +7,7 @@ from views.equipo_view import EquipoView
 from views.jugador_view import JugadorView
 from views.usuario_view import UsuarioView
 
+from reports.reporte_usuarios import generar_reporte_usuarios
 
 class MenuPrincipal:
 
@@ -65,6 +66,13 @@ class MenuPrincipal:
             width=25,
             command=self.abrir_usuarios
         ).pack(pady=5)
+
+        tk.Button(
+    self.ventana,
+    text="Reporte Usuarios PDF",
+    width=25,
+    command=generar_reporte_usuarios
+).pack(pady=5)
 
         self.ventana.mainloop()
 
