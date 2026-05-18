@@ -4,7 +4,11 @@ from database.conexion import conectar
 class EstadioController:
 
     @staticmethod
-    def insertar_estadio(nombre, capacidad, id_ciudad):
+    def insertar_estadio(
+        nombre,
+        capacidad,
+        id_ciudad
+    ):
 
         conexion = conectar()
 
@@ -21,7 +25,11 @@ class EstadioController:
 
         cursor.execute(
             query,
-            (nombre, capacidad, id_ciudad)
+            (
+                nombre,
+                capacidad,
+                id_ciudad
+            )
         )
 
         conexion.commit()
