@@ -20,9 +20,7 @@ class Login:
             text="Usuario"
         ).pack(pady=10)
 
-        self.usuario = tk.Entry(
-            self.ventana
-        )
+        self.usuario = tk.Entry(self.ventana)
 
         self.usuario.pack()
 
