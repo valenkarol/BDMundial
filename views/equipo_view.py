@@ -6,7 +6,7 @@ from controllers.equipo_controller import EquipoController
 from controllers.confederacion_controller import ConfederacionController
 from controllers.grupo_controller import GrupoController
 from controllers.director_tecnico_controller import DirectorTecnicoController
-
+from controllers.pais_controller import PaisController
 
 class EquipoView:
 
@@ -69,6 +69,18 @@ class EquipoView:
         )
 
         self.combo_director.pack()
+
+        tk.Label(
+            self.ventana,
+            text="País"
+        ).pack()
+
+        self.combo_pais = ttk.Combobox(
+            self.ventana,
+            state="readonly"
+        )
+
+        self.combo_pais.pack()
 
         self.cargar_datos()
 
@@ -158,6 +170,17 @@ class EquipoView:
 
         self.combo_director["values"] = lista_directores
 
+        #PAISES 
+        paises = PaisController.obtener_paises()
+
+        self.pais_dict = {}
+        lista_paises = []
+
+        for p in paises:
+            self.pais_dict[p[1]] = p[0]
+            lista_paises.append(p[1])
+        self.combo_pais["values"] = lista_paises
+
     def guardar_equipo(self):
 
         nombre = self.nombre.get()
@@ -167,6 +190,8 @@ class EquipoView:
         grupo = self.combo_grupo.get()
 
         director = self.combo_director.get()
+
+        pais = self.combo_pais.get()
 
         if (
             nombre == ""
@@ -186,7 +211,8 @@ class EquipoView:
             nombre,
             self.conf_dict[conf],
             self.grupo_dict[grupo],
-            self.director_dict[director]
+            self.director_dict[director],
+            self.pais_dict[pais]
         )
 
         messagebox.showinfo(

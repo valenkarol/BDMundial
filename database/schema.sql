@@ -41,13 +41,19 @@ CREATE TABLE director_tecnico (
     nombre VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE equipo (
+CREATE TABLE IF NOT EXISTS equipo (
+
     id_equipo INT AUTO_INCREMENT PRIMARY KEY,
+
     nombre VARCHAR(100) NOT NULL,
 
     id_confederacion INT NOT NULL,
+
     id_grupo INT NOT NULL,
+
     id_director INT UNIQUE,
+
+    id_pais INT NOT NULL,
 
     FOREIGN KEY (id_confederacion)
     REFERENCES confederacion(id_confederacion),
@@ -56,7 +62,10 @@ CREATE TABLE equipo (
     REFERENCES grupo(id_grupo),
 
     FOREIGN KEY (id_director)
-    REFERENCES director_tecnico(id_director)
+    REFERENCES director_tecnico(id_director),
+
+    FOREIGN KEY (id_pais)
+    REFERENCES pais(id_pais)
 );
 
 CREATE TABLE jugador (
@@ -77,18 +86,25 @@ CREATE TABLE jugador (
     REFERENCES equipo(id_equipo)
 );
 
-CREATE TABLE partido (
+CREATE TABLE IF NOT EXISTS partido (
+
     id_partido INT AUTO_INCREMENT PRIMARY KEY,
 
     fecha DATE NOT NULL,
 
     id_estadio INT NOT NULL,
+
     id_equipo_local INT NOT NULL,
+
+    id_equipo_visitante INT NOT NULL,
 
     FOREIGN KEY (id_estadio)
     REFERENCES estadio(id_estadio),
 
     FOREIGN KEY (id_equipo_local)
+    REFERENCES equipo(id_equipo),
+
+    FOREIGN KEY (id_equipo_visitante)
     REFERENCES equipo(id_equipo)
 );
 

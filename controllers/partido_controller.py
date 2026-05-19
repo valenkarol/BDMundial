@@ -7,7 +7,8 @@ class PartidoController:
     def insertar_partido(
         fecha,
         id_estadio,
-        id_equipo_local
+        id_local,
+        id_visitante
     ):
 
         conexion = conectar()
@@ -18,9 +19,10 @@ class PartidoController:
         INSERT INTO partido(
         fecha,
         id_estadio,
-        id_equipo_local
+        id_equipo_local,
+        id_equipo_visitante
         )
-        VALUES(%s, %s, %s)
+        VALUES(%s,%s,%s,%s)
         """
 
         cursor.execute(
@@ -28,7 +30,8 @@ class PartidoController:
             (
                 fecha,
                 id_estadio,
-                id_equipo_local
+                id_local,
+                id_visitante
             )
         )
 
@@ -44,15 +47,19 @@ class PartidoController:
         cursor = conexion.cursor()
 
         query = """
-        SELECT p.id_partido,
-               p.fecha,
-               e.nombre,
-               eq.nombre
+        SELECT
+        p.id_partido,
+        p.fecha,
+        es.nombre,
+        el.nombre,
+        ev.nombre
         FROM partido p
-        INNER JOIN estadio e
-        ON p.id_estadio = e.id_estadio
-        INNER JOIN equipo eq
-        ON p.id_equipo_local = eq.id_equipo
+        INNER JOIN estadio es
+        ON p.id_estadio = es.id_estadio
+        INNER JOIN equipo el
+        ON p.id_equipo_local = el.id_equipo
+        INNER JOIN equipo ev
+        ON p.id_equipo_visitante = ev.id_equipo
         """
 
         cursor.execute(query)

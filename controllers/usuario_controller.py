@@ -5,8 +5,8 @@ class UsuarioController:
 
     @staticmethod
     def insertar_usuario(
-        nombreUsuario,
-        contrasena,
+        usuario,
+        password,
         rol
     ):
 
@@ -26,8 +26,8 @@ class UsuarioController:
         cursor.execute(
             query,
             (
-                nombreUsuario,
-                contrasena,
+                usuario,
+                password,
                 rol
             )
         )

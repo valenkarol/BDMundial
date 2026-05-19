@@ -9,7 +9,7 @@ from views.usuario_view import UsuarioView
 from views.partido_view import PartidoView
 
 from reports.reporte_usuarios import generar_reporte_usuarios
-
+from reports.reportes_profesor import reporte_valor_equipos
 
 class MenuPrincipal:
 
@@ -112,6 +112,14 @@ class MenuPrincipal:
         ).pack(pady=10)
 
         self.ventana.mainloop()
+
+        tk.Button(
+            self.ventana,
+            text="Reporte Valor Equipos",
+            width=30,
+            height=2,
+            command=reporte_valor_equipos
+        ).pack(pady=5)
 
     # MÉTODOS
 

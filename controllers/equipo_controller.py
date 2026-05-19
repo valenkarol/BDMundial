@@ -8,7 +8,8 @@ class EquipoController:
         nombre,
         id_confederacion,
         id_grupo,
-        id_director
+        id_director,
+        id_pais
     ):
 
         conexion = conectar()
@@ -20,9 +21,10 @@ class EquipoController:
         nombre,
         id_confederacion,
         id_grupo,
-        id_director
+        id_director,
+        id_pais
         )
-        VALUES(%s, %s, %s, %s)
+        VALUES(%s,%s,%s,%s,%s)
         """
 
         cursor.execute(
@@ -31,7 +33,8 @@ class EquipoController:
                 nombre,
                 id_confederacion,
                 id_grupo,
-                id_director
+                id_director,
+                id_pais
             )
         )
 
@@ -47,11 +50,13 @@ class EquipoController:
         cursor = conexion.cursor()
 
         query = """
-        SELECT e.id_equipo,
-               e.nombre,
-               c.nombre,
-               g.nombre,
-               d.nombre
+        SELECT
+        e.id_equipo,
+        e.nombre,
+        c.nombre,
+        g.nombre,
+        d.nombre,
+        p.nombre
         FROM equipo e
         INNER JOIN confederacion c
         ON e.id_confederacion = c.id_confederacion
@@ -59,6 +64,8 @@ class EquipoController:
         ON e.id_grupo = g.id_grupo
         INNER JOIN director_tecnico d
         ON e.id_director = d.id_director
+        INNER JOIN pais p
+        ON e.id_pais = p.id_pais
         """
 
         cursor.execute(query)
