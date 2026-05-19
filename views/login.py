@@ -64,7 +64,7 @@ class Login:
 
             self.ventana.destroy()
 
-            MenuPrincipal()
+            MenuPrincipal(resultado)
 
         else:
 
