@@ -235,6 +235,9 @@ class MenuPrincipal:
     def abrir_estadios(self):
         EstadioView()
 
+    def abrir_directores(self):
+        DirectorTecnicoView()
+
     def abrir_equipos(self):
         EquipoView()
 
@@ -247,8 +250,6 @@ class MenuPrincipal:
     def abrir_usuarios(self):
         UsuarioView()
 
-    def abrir_directores(self):
-        DirectorTecnicoView()
 
     # ── CONSULTAS ─────────────────────────────────────────────
 
