@@ -39,4 +39,12 @@ class DirectorTecnicoController:
 
         conexion.close()
 
+        @staticmethod
+        def eliminar_director(id_director):
+            conexion = conectar()
+            cursor   = conexion.cursor()
+            cursor.execute("DELETE FROM director_tecnico WHERE id_director = %s", (id_director,))
+            conexion.commit()
+            conexion.close()
+
         return resultados

@@ -8,6 +8,7 @@ from views.jugador_view import JugadorView
 from views.usuario_view import UsuarioView
 from views.partido_view import PartidoView
 from views.consulta_view import ConsultaView
+from views.director_tecnico import DirectorTecnicoView
 
 from reports.reporte_usuarios import generar_reporte_usuarios
 from reports.reportes_profesor import reporte_valor_equipos
@@ -63,6 +64,15 @@ class MenuPrincipal:
                 font=("Arial", 10, "italic"),
                 fg="#444"
             ).pack(pady=(6, 2))
+
+            # BOTÓN DIRECTORES TÉCNICOS
+            tk.Button(
+                self.ventana,
+                text="Directores Técnicos",
+                width=35,
+                height=2,
+                command=self.abrir_directores
+                ).pack(pady=3)
 
             # BOTÓN PAÍSES
             tk.Button(
@@ -236,6 +246,9 @@ class MenuPrincipal:
 
     def abrir_usuarios(self):
         UsuarioView()
+
+    def abrir_directores(self):
+        DirectorTecnicoView()
 
     # ── CONSULTAS ─────────────────────────────────────────────
 
