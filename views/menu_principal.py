@@ -26,186 +26,244 @@ class MenuPrincipal:
         """
         usuario = (id_usuario, nombreUsuario, contrasena, rol)
         """
+
         self.id_usuario = usuario[0]
-        self.nombre     = usuario[1]
-        self.rol        = usuario[3]  # 'ADMIN' | 'TRADICIONAL' | 'ESPORADICO'
+        self.nombre = usuario[1]
+        self.rol = usuario[3]
 
         self.ventana = tk.Tk()
         self.ventana.title("Sistema Mundial 2026")
         self.ventana.geometry("500x700")
         self.ventana.resizable(False, True)
 
-        # Cerrar con la X también registra salida en bitácora
-        self.ventana.protocol("WM_DELETE_WINDOW", self.salir)
+        # ─────────────────────────────────────────────
+        # CONTENEDOR PRINCIPAL CON SCROLL
+        # ─────────────────────────────────────────────
 
-        # ── TÍTULO ───────────────────────────────────────────
+        contenedor = tk.Frame(self.ventana)
+        contenedor.pack(fill="both", expand=True)
+
+        canvas = tk.Canvas(contenedor)
+        canvas.pack(side="left", fill="both", expand=True)
+
+        scrollbar = tk.Scrollbar(
+            contenedor,
+            orient="vertical",
+            command=canvas.yview
+        )
+        scrollbar.pack(side="right", fill="y")
+
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        # Frame interno
+        self.frame_menu = tk.Frame(canvas)
+
+        canvas.create_window(
+            (0, 0),
+            window=self.frame_menu,
+            anchor="nw"
+        )
+
+        # Actualizar scroll automáticamente
+        self.frame_menu.bind(
+            "<Configure>",
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
+        )
+
+        # Scroll con rueda del mouse
+        canvas.bind_all(
+            "<MouseWheel>",
+            lambda e: canvas.yview_scroll(
+                int(-1 * (e.delta / 120)),
+                "units"
+            )
+        )
+
+        # Registrar salida al cerrar ventana
+        self.ventana.protocol(
+            "WM_DELETE_WINDOW",
+            self.salir
+        )
+
+        # ─────────────────────────────────────────────
+        # TÍTULO
+        # ─────────────────────────────────────────────
+
         tk.Label(
-            self.ventana,
+            self.frame_menu,
             text="MENÚ PRINCIPAL",
             font=("Arial", 20, "bold")
         ).pack(pady=10)
 
         tk.Label(
-            self.ventana,
+            self.frame_menu,
             text=f"Usuario: {self.nombre}   |   Rol: {self.rol}",
             font=("Arial", 10),
             fg="gray"
         ).pack(pady=2)
 
-        tk.Frame(self.ventana, height=2, bg="gray").pack(fill="x", padx=20, pady=8)
+        tk.Frame(
+            self.frame_menu,
+            height=2,
+            bg="gray"
+        ).pack(fill="x", padx=20, pady=8)
 
-        # ── SECCIÓN CRUD ─────────────────────────────────────
-        # Solo ADMIN y TRADICIONAL pueden gestionar datos
+        # ─────────────────────────────────────────────
+        # SECCIÓN CRUD
+        # ─────────────────────────────────────────────
+
         if self.rol in ("ADMIN", "TRADICIONAL"):
 
             tk.Label(
-                self.ventana,
+                self.frame_menu,
                 text="Gestión de datos",
                 font=("Arial", 10, "italic"),
                 fg="#444"
             ).pack(pady=(6, 2))
 
-            # BOTÓN DIRECTORES TÉCNICOS
             tk.Button(
-                self.ventana,
+                self.frame_menu,
                 text="Directores Técnicos",
                 width=35,
                 height=2,
                 command=self.abrir_directores
-                ).pack(pady=3)
+            ).pack(pady=3)
 
-            # BOTÓN PAÍSES
             tk.Button(
-                self.ventana,
-                text="CRUD Países",
+                self.frame_menu,
+                text="Países",
                 width=35,
                 height=2,
                 command=self.abrir_paises
             ).pack(pady=3)
 
-            # BOTÓN CIUDADES
             tk.Button(
-                self.ventana,
-                text="CRUD Ciudades",
+                self.frame_menu,
+                text="Ciudades",
                 width=35,
                 height=2,
                 command=self.abrir_ciudades
             ).pack(pady=3)
 
-            # BOTÓN ESTADIOS
             tk.Button(
-                self.ventana,
-                text="CRUD Estadios",
+                self.frame_menu,
+                text="Estadios",
                 width=35,
                 height=2,
                 command=self.abrir_estadios
             ).pack(pady=3)
 
-            # BOTÓN EQUIPOS
             tk.Button(
-                self.ventana,
-                text="CRUD Equipos",
+                self.frame_menu,
+                text="Equipos",
                 width=35,
                 height=2,
                 command=self.abrir_equipos
             ).pack(pady=3)
 
-            # BOTÓN JUGADORES
             tk.Button(
-                self.ventana,
-                text="CRUD Jugadores",
+                self.frame_menu,
+                text="Jugadores",
                 width=35,
                 height=2,
                 command=self.abrir_jugadores
             ).pack(pady=3)
 
-            # BOTÓN PARTIDOS
             tk.Button(
-                self.ventana,
-                text="CRUD Partidos",
+                self.frame_menu,
+                text="Partidos",
                 width=35,
                 height=2,
                 command=self.abrir_partidos
             ).pack(pady=3)
 
-            # BOTÓN USUARIOS — solo el ADMIN
+            # SOLO ADMIN
             if self.rol == "ADMIN":
+
                 tk.Button(
-                    self.ventana,
-                    text="CRUD Usuarios",
+                    self.frame_menu,
+                    text="Usuarios",
                     width=35,
                     height=2,
                     command=self.abrir_usuarios
                 ).pack(pady=3)
 
-        # ── SECCIÓN CONSULTAS ─────────────────────────────────
-        # Todos los roles pueden ejecutar consultas
+        # ─────────────────────────────────────────────
+        # CONSULTAS
+        # ─────────────────────────────────────────────
+
         tk.Label(
-            self.ventana,
+            self.frame_menu,
             text="Consultas",
             font=("Arial", 10, "italic"),
             fg="#444"
         ).pack(pady=(8, 2))
 
-        # BOTÓN CONSULTAS
         tk.Button(
-            self.ventana,
+            self.frame_menu,
             text="Consultas",
             width=35,
             height=2,
             command=self.abrir_consultas
         ).pack(pady=3)
 
-        # ── SECCIÓN REPORTES ──────────────────────────────────
-        # Todos los roles pueden ver reportes
+        # ─────────────────────────────────────────────
+        # REPORTES
+        # ─────────────────────────────────────────────
+
         tk.Label(
-            self.ventana,
+            self.frame_menu,
             text="Reportes PDF",
             font=("Arial", 10, "italic"),
             fg="#444"
         ).pack(pady=(8, 2))
 
-        # BOTÓN REPORTE USUARIOS PDF
         tk.Button(
-            self.ventana,
+            self.frame_menu,
             text="Reporte Usuarios PDF",
             width=35,
             height=2,
             command=generar_reporte_usuarios
         ).pack(pady=3)
 
-        # BOTÓN REPORTE VALOR EQUIPOS
         tk.Button(
-            self.ventana,
+            self.frame_menu,
             text="Reporte Valor Equipos",
             width=35,
             height=2,
             command=reporte_valor_equipos
         ).pack(pady=3)
 
-        # BOTÓN REPORTE JUGADORES
         tk.Button(
-            self.ventana,
+            self.frame_menu,
             text="Reporte Jugadores por Filtro",
             width=35,
             height=2,
             command=reporte_jugadores_por_filtro
         ).pack(pady=3)
 
-        # BOTÓN REPORTE PARTIDOS POR PAÍS
         tk.Button(
-            self.ventana,
+            self.frame_menu,
             text="Reporte Partidos por País Sede",
             width=35,
             height=2,
             command=reporte_partidos_por_pais_anfitrion
         ).pack(pady=3)
 
-        # ── BOTÓN SALIR ───────────────────────────────────────
-        tk.Frame(self.ventana, height=2, bg="gray").pack(fill="x", padx=20, pady=8)
+        # ─────────────────────────────────────────────
+        # BOTÓN SALIR
+        # ─────────────────────────────────────────────
+
+        tk.Frame(
+            self.frame_menu,
+            height=2,
+            bg="gray"
+        ).pack(fill="x", padx=20, pady=8)
 
         tk.Button(
-            self.ventana,
+            self.frame_menu,
             text="Salir",
             width=35,
             height=2,
@@ -215,16 +273,19 @@ class MenuPrincipal:
             command=self.salir
         ).pack(pady=10)
 
-        # mainloop() siempre al final, después de TODOS los widgets
         self.ventana.mainloop()
 
-    # ── SALIR ─────────────────────────────────────────────────
+    # ─────────────────────────────────────────────
+    # SALIR
+    # ─────────────────────────────────────────────
 
     def salir(self):
         BitacoraController.registrar_salida(self.id_usuario)
         self.ventana.destroy()
 
-    # ── MÉTODOS CRUD ──────────────────────────────────────────
+    # ─────────────────────────────────────────────
+    # MÉTODOS CRUD
+    # ─────────────────────────────────────────────
 
     def abrir_paises(self):
         PaisView()
@@ -250,8 +311,9 @@ class MenuPrincipal:
     def abrir_usuarios(self):
         UsuarioView()
 
-
-    # ── CONSULTAS ─────────────────────────────────────────────
+    # ─────────────────────────────────────────────
+    # CONSULTAS
+    # ─────────────────────────────────────────────
 
     def abrir_consultas(self):
         ConsultaView()
