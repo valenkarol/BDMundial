@@ -12,7 +12,9 @@ class PartidoView:
     def __init__(self):
 
         self.ventana = tk.Toplevel()
+
         self.ventana.title("CRUD PARTIDOS")
+
         self.ventana.geometry("800x600")
 
         # ─────────────────────────────
@@ -32,6 +34,7 @@ class PartidoView:
             borderwidth=2,
             date_pattern="yyyy-mm-dd"
         )
+
         self.fecha.pack(pady=3)
 
         # ─────────────────────────────
@@ -48,6 +51,7 @@ class PartidoView:
             state="readonly",
             width=37
         )
+
         self.combo_estadio.pack(pady=3)
 
         # ─────────────────────────────
@@ -64,6 +68,7 @@ class PartidoView:
             state="readonly",
             width=37
         )
+
         self.combo_equipo.pack(pady=3)
 
         # ─────────────────────────────
@@ -80,20 +85,37 @@ class PartidoView:
             state="readonly",
             width=37
         )
+
         self.combo_visitante.pack(pady=3)
 
-        # Cargar datos
+        # ─────────────────────────────
+        # CARGAR DATOS
+        # ─────────────────────────────
+
         self.cargar_datos()
 
         # ─────────────────────────────
-        # BOTÓN GUARDAR
+        # BOTONES
         # ─────────────────────────────
 
+        frame_botones = tk.Frame(self.ventana)
+        frame_botones.pack(pady=10)
+
         tk.Button(
-            self.ventana,
+            frame_botones,
             text="Guardar",
+            width=15,
             command=self.guardar_partido
-        ).pack(pady=10)
+        ).grid(row=0, column=0, padx=5)
+
+        tk.Button(
+            frame_botones,
+            text="Eliminar",
+            width=15,
+            bg="red",
+            fg="white",
+            command=self.eliminar
+        ).grid(row=0, column=1, padx=5)
 
         # ─────────────────────────────
         # TABLA
@@ -111,11 +133,30 @@ class PartidoView:
             show="headings"
         )
 
-        self.tabla.heading("ID", text="ID")
-        self.tabla.heading("Fecha", text="Fecha")
-        self.tabla.heading("Estadio", text="Estadio")
-        self.tabla.heading("Local", text="Equipo Local")
-        self.tabla.heading("Visitante", text="Equipo Visitante")
+        self.tabla.heading(
+            "ID",
+            text="ID"
+        )
+
+        self.tabla.heading(
+            "Fecha",
+            text="Fecha"
+        )
+
+        self.tabla.heading(
+            "Estadio",
+            text="Estadio"
+        )
+
+        self.tabla.heading(
+            "Local",
+            text="Equipo Local"
+        )
+
+        self.tabla.heading(
+            "Visitante",
+            text="Equipo Visitante"
+        )
 
         self.tabla.pack(
             fill="both",
@@ -135,6 +176,7 @@ class PartidoView:
         estadios = EstadioController.obtener_estadios()
 
         self.estadios_dict = {}
+
         lista_estadios = []
 
         for estadio in estadios:
@@ -153,6 +195,7 @@ class PartidoView:
         equipos = EquipoController.obtener_equipos()
 
         self.equipos_dict = {}
+
         lista_equipos = []
 
         for equipo in equipos:
@@ -165,54 +208,109 @@ class PartidoView:
                 equipo[1]
             )
 
-        # AQUÍ ESTABA EL ERROR
         self.combo_equipo["values"] = lista_equipos
+
         self.combo_visitante["values"] = lista_equipos
 
     # ─────────────────────────────
-    # GUARDAR PARTIDO
+    # GUARDAR
     # ─────────────────────────────
 
     def guardar_partido(self):
 
-        fecha = self.fecha.get()
-        estadio = self.combo_estadio.get()
-        equipo_local = self.combo_equipo.get()
-        visitante = self.combo_visitante.get()
+        try:
 
-        if (
-            estadio == ""
-            or equipo_local == ""
-            or visitante == ""
-        ):
+            fecha = self.fecha.get()
+
+            estadio = self.combo_estadio.get()
+
+            equipo_local = self.combo_equipo.get()
+
+            visitante = self.combo_visitante.get()
+
+            if (
+                estadio == ""
+                or equipo_local == ""
+                or visitante == ""
+            ):
+
+                messagebox.showerror(
+                    "Error",
+                    "Complete todos los campos"
+                )
+
+                return
+
+            if equipo_local == visitante:
+
+                messagebox.showerror(
+                    "Error",
+                    "El equipo local y visitante no pueden ser iguales"
+                )
+
+                return
+
+            PartidoController.insertar_partido(
+                fecha,
+                self.estadios_dict[estadio],
+                self.equipos_dict[equipo_local],
+                self.equipos_dict[visitante]
+            )
+
+            messagebox.showinfo(
+                "Correcto",
+                "Partido guardado"
+            )
+
+            self.cargar_partidos()
+
+        except Exception as e:
 
             messagebox.showerror(
-                "Error",
-                "Complete todos los campos"
+                "Error SQL",
+                str(e)
             )
-            return
 
-        if equipo_local == visitante:
+    # ─────────────────────────────
+    # ELIMINAR
+    # ─────────────────────────────
+
+    def eliminar(self):
+
+        try:
+
+            seleccion = self.tabla.selection()
+
+            if not seleccion:
+
+                messagebox.showerror(
+                    "Error",
+                    "Seleccione un partido"
+                )
+
+                return
+
+            item = self.tabla.item(seleccion)
+
+            id_partido = item["values"][0]
+
+            PartidoController.eliminar_partido(
+                id_partido
+            )
+
+            messagebox.showinfo(
+                "Correcto",
+                "Partido eliminado"
+            )
+
+            self.cargar_partidos()
+
+        except Exception as e:
 
             messagebox.showerror(
-                "Error",
-                "El equipo local y visitante no pueden ser iguales"
+                "Error SQL",
+                str(e)
             )
-            return
-
-        PartidoController.insertar_partido(
-            fecha,
-            self.estadios_dict[estadio],
-            self.equipos_dict[equipo_local],
-            self.equipos_dict[visitante]
-        )
-
-        messagebox.showinfo(
-            "Correcto",
-            "Partido guardado"
-        )
-
-        self.cargar_partidos()
 
     # ─────────────────────────────
     # CARGAR TABLA
@@ -221,6 +319,7 @@ class PartidoView:
     def cargar_partidos(self):
 
         for fila in self.tabla.get_children():
+
             self.tabla.delete(fila)
 
         partidos = PartidoController.obtener_partidos()

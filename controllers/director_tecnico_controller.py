@@ -15,11 +15,18 @@ class DirectorTecnicoController:
         VALUES(%s)
         """
 
-        cursor.execute(query, (nombre,))
+        cursor.execute(
+            query,
+            (nombre,)
+        )
 
         conexion.commit()
 
         conexion.close()
+
+    # ─────────────────────────────
+    # OBTENER
+    # ─────────────────────────────
 
     @staticmethod
     def obtener_directores():
@@ -39,12 +46,29 @@ class DirectorTecnicoController:
 
         conexion.close()
 
-        @staticmethod
-        def eliminar_director(id_director):
-            conexion = conectar()
-            cursor   = conexion.cursor()
-            cursor.execute("DELETE FROM director_tecnico WHERE id_director = %s", (id_director,))
-            conexion.commit()
-            conexion.close()
-
         return resultados
+
+    # ─────────────────────────────
+    # ELIMINAR
+    # ─────────────────────────────
+
+    @staticmethod
+    def eliminar_director(id_director):
+
+        conexion = conectar()
+
+        cursor = conexion.cursor()
+
+        query = """
+        DELETE FROM director_tecnico
+        WHERE id_director = %s
+        """
+
+        cursor.execute(
+            query,
+            (id_director,)
+        )
+
+        conexion.commit()
+
+        conexion.close()
