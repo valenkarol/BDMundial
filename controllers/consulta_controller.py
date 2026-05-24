@@ -76,33 +76,34 @@ class ConsultaController:
 
         query = """
         SELECT
-            pa_sede.nombre   AS pais_anfitrion,
-            eq.nombre        AS equipo,
-            SUM(j.valor)     AS valor_total
-        FROM partido p
-        INNER JOIN estadio  es       ON p.id_estadio         = es.id_estadio
-        INNER JOIN ciudad   ci       ON es.id_ciudad          = ci.id_ciudad
-        INNER JOIN pais     pa_sede  ON ci.pais_sede          = pa_sede.id_pais
-        INNER JOIN equipo   eq       ON p.id_equipo_local     = eq.id_equipo
-        INNER JOIN jugador  j        ON j.id_equipo           = eq.id_equipo
-        WHERE pa_sede.nombre IN ('México', 'USA', 'Canadá')
-        GROUP BY pa_sede.nombre, eq.nombre
-        HAVING SUM(j.valor) = (
-            SELECT MAX(sub_total)
-            FROM (
-                SELECT SUM(j2.valor) AS sub_total
-                FROM partido        p2
-                INNER JOIN estadio  es2 ON p2.id_estadio     = es2.id_estadio
-                INNER JOIN ciudad   ci2 ON es2.id_ciudad      = ci2.id_ciudad
-                INNER JOIN pais     pa2 ON ci2.pais_sede      = pa2.id_pais
-                INNER JOIN equipo   eq2 ON p2.id_equipo_local = eq2.id_equipo
-                INNER JOIN jugador  j2  ON j2.id_equipo       = eq2.id_equipo
-                WHERE pa2.nombre = pa_sede.nombre
-                GROUP BY eq2.id_equipo
-            ) AS totales
+        pais.nombre AS pais_anfitrion,
+        equipo.nombre AS equipo,
+        SUM(j.valor) AS valor_total
+    FROM partido p
+
+    INNER JOIN estadio e
+        ON p.id_estadio = e.id_estadio
+
+    INNER JOIN ciudad c
+        ON e.id_ciudad = c.id_ciudad
+
+    INNER JOIN pais
+        ON c.pais_sede = pais.id_pais
+
+    INNER JOIN equipo
+        ON (
+            equipo.id_equipo = p.id_equipo_local
+            OR
+            equipo.id_equipo = p.id_equipo_visitante
         )
-        ORDER BY pa_sede.nombre
-        """
+
+    INNER JOIN jugador j
+        ON j.id_equipo = equipo.id_equipo
+
+    GROUP BY pais.nombre, equipo.nombre
+
+    ORDER BY valor_total DESC
+    """
 
         cursor.execute(query)
         resultados = cursor.fetchall()

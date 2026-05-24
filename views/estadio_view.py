@@ -14,13 +14,16 @@ class EstadioView:
 
         self.ventana.title("CRUD ESTADIOS")
 
-        self.ventana.geometry("800x500")
+        self.ventana.geometry("700x500")
 
-        # NOMBRE
+        # ─────────────────────────────
+        # NOMBRE ESTADIO
+        # ─────────────────────────────
+
         tk.Label(
             self.ventana,
             text="Nombre Estadio"
-        ).pack()
+        ).pack(pady=5)
 
         self.nombre = tk.Entry(
             self.ventana,
@@ -29,11 +32,14 @@ class EstadioView:
 
         self.nombre.pack()
 
+        # ─────────────────────────────
         # CAPACIDAD
+        # ─────────────────────────────
+
         tk.Label(
             self.ventana,
             text="Capacidad"
-        ).pack()
+        ).pack(pady=5)
 
         self.capacidad = tk.Entry(
             self.ventana,
@@ -42,11 +48,14 @@ class EstadioView:
 
         self.capacidad.pack()
 
+        # ─────────────────────────────
         # CIUDAD
+        # ─────────────────────────────
+
         tk.Label(
             self.ventana,
             text="Ciudad"
-        ).pack()
+        ).pack(pady=5)
 
         self.combo_ciudad = ttk.Combobox(
             self.ventana,
@@ -58,14 +67,33 @@ class EstadioView:
 
         self.cargar_ciudades()
 
-        # BOTÓN
-        tk.Button(
-            self.ventana,
-            text="Guardar",
-            command=self.guardar_estadio
-        ).pack(pady=10)
+        # ─────────────────────────────
+        # BOTONES
+        # ─────────────────────────────
 
+        frame_botones = tk.Frame(self.ventana)
+        frame_botones.pack(pady=10)
+
+        tk.Button(
+            frame_botones,
+            text="Guardar",
+            width=15,
+            command=self.guardar_estadio
+        ).grid(row=0, column=0, padx=5)
+
+        tk.Button(
+            frame_botones,
+            text="Eliminar",
+            width=15,
+            bg="red",
+            fg="white",
+            command=self.eliminar
+        ).grid(row=0, column=1, padx=5)
+
+        # ─────────────────────────────
         # TABLA
+        # ─────────────────────────────
+
         self.tabla = ttk.Treeview(
             self.ventana,
             columns=(
@@ -84,10 +112,15 @@ class EstadioView:
 
         self.tabla.pack(
             fill="both",
-            expand=True
+            expand=True,
+            pady=20
         )
 
         self.cargar_estadios()
+
+    # ─────────────────────────────
+    # CARGAR CIUDADES
+    # ─────────────────────────────
 
     def cargar_ciudades(self):
 
@@ -99,11 +132,19 @@ class EstadioView:
 
         for ciudad in ciudades:
 
-            self.ciudades_dict[ciudad[1]] = ciudad[0]
+            self.ciudades_dict[
+                ciudad[1]
+            ] = ciudad[0]
 
-            nombres.append(ciudad[1])
+            nombres.append(
+                ciudad[1]
+            )
 
         self.combo_ciudad["values"] = nombres
+
+    # ─────────────────────────────
+    # GUARDAR
+    # ─────────────────────────────
 
     def guardar_estadio(self):
 
@@ -142,10 +183,45 @@ class EstadioView:
         )
 
         self.nombre.delete(0, tk.END)
-
         self.capacidad.delete(0, tk.END)
 
         self.cargar_estadios()
+
+    # ─────────────────────────────
+    # ELIMINAR
+    # ─────────────────────────────
+
+    def eliminar(self):
+
+        seleccion = self.tabla.selection()
+
+        if not seleccion:
+
+            messagebox.showerror(
+                "Error",
+                "Seleccione un estadio"
+            )
+
+            return
+
+        item = self.tabla.item(seleccion)
+
+        id_estadio = item["values"][0]
+
+        EstadioController.eliminar_estadio(
+            id_estadio
+        )
+
+        messagebox.showinfo(
+            "Correcto",
+            "Estadio eliminado"
+        )
+
+        self.cargar_estadios()
+
+    # ─────────────────────────────
+    # CARGAR TABLA
+    # ─────────────────────────────
 
     def cargar_estadios(self):
 

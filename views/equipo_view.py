@@ -8,6 +8,7 @@ from controllers.grupo_controller import GrupoController
 from controllers.director_tecnico_controller import DirectorTecnicoController
 from controllers.pais_controller import PaisController
 
+
 class EquipoView:
 
     def __init__(self):
@@ -18,7 +19,10 @@ class EquipoView:
 
         self.ventana.geometry("900x600")
 
+        # ─────────────────────────────
         # NOMBRE
+        # ─────────────────────────────
+
         tk.Label(
             self.ventana,
             text="Nombre Equipo"
@@ -31,7 +35,10 @@ class EquipoView:
 
         self.nombre.pack()
 
+        # ─────────────────────────────
         # CONFEDERACIÓN
+        # ─────────────────────────────
+
         tk.Label(
             self.ventana,
             text="Confederación"
@@ -44,7 +51,10 @@ class EquipoView:
 
         self.combo_confederacion.pack()
 
+        # ─────────────────────────────
         # GRUPO
+        # ─────────────────────────────
+
         tk.Label(
             self.ventana,
             text="Grupo"
@@ -57,7 +67,10 @@ class EquipoView:
 
         self.combo_grupo.pack()
 
-        # DIRECTOR
+        # ─────────────────────────────
+        # DIRECTOR TÉCNICO
+        # ─────────────────────────────
+
         tk.Label(
             self.ventana,
             text="Director Técnico"
@@ -69,6 +82,10 @@ class EquipoView:
         )
 
         self.combo_director.pack()
+
+        # ─────────────────────────────
+        # PAÍS
+        # ─────────────────────────────
 
         tk.Label(
             self.ventana,
@@ -84,13 +101,33 @@ class EquipoView:
 
         self.cargar_datos()
 
-        tk.Button(
-            self.ventana,
-            text="Guardar",
-            command=self.guardar_equipo
-        ).pack(pady=10)
+        # ─────────────────────────────
+        # BOTONES
+        # ─────────────────────────────
 
+        frame_botones = tk.Frame(self.ventana)
+        frame_botones.pack(pady=10)
+
+        tk.Button(
+            frame_botones,
+            text="Guardar",
+            width=15,
+            command=self.guardar_equipo
+        ).grid(row=0, column=0, padx=5)
+
+        tk.Button(
+            frame_botones,
+            text="Eliminar",
+            width=15,
+            bg="red",
+            fg="white",
+            command=self.eliminar
+        ).grid(row=0, column=1, padx=5)
+
+        # ─────────────────────────────
         # TABLA
+        # ─────────────────────────────
+
         self.tabla = ttk.Treeview(
             self.ventana,
             columns=(
@@ -118,10 +155,15 @@ class EquipoView:
 
         self.tabla.pack(
             fill="both",
-            expand=True
+            expand=True,
+            pady=20
         )
 
         self.cargar_equipos()
+
+    # ─────────────────────────────
+    # CARGAR DATOS
+    # ─────────────────────────────
 
     def cargar_datos(self):
 
@@ -170,16 +212,24 @@ class EquipoView:
 
         self.combo_director["values"] = lista_directores
 
-        #PAISES 
+        # PAÍSES
         paises = PaisController.obtener_paises()
 
         self.pais_dict = {}
+
         lista_paises = []
 
         for p in paises:
+
             self.pais_dict[p[1]] = p[0]
+
             lista_paises.append(p[1])
+
         self.combo_pais["values"] = lista_paises
+
+    # ─────────────────────────────
+    # GUARDAR
+    # ─────────────────────────────
 
     def guardar_equipo(self):
 
@@ -198,6 +248,7 @@ class EquipoView:
             or conf == ""
             or grupo == ""
             or director == ""
+            or pais == ""
         ):
 
             messagebox.showerror(
@@ -220,7 +271,45 @@ class EquipoView:
             "Equipo guardado"
         )
 
+        self.nombre.delete(0, tk.END)
+
         self.cargar_equipos()
+
+    # ─────────────────────────────
+    # ELIMINAR
+    # ─────────────────────────────
+
+    def eliminar(self):
+
+        seleccion = self.tabla.selection()
+
+        if not seleccion:
+
+            messagebox.showerror(
+                "Error",
+                "Seleccione un equipo"
+            )
+
+            return
+
+        item = self.tabla.item(seleccion)
+
+        id_equipo = item["values"][0]
+
+        EquipoController.eliminar_equipo(
+            id_equipo
+        )
+
+        messagebox.showinfo(
+            "Correcto",
+            "Equipo eliminado"
+        )
+
+        self.cargar_equipos()
+
+    # ─────────────────────────────
+    # CARGAR TABLA
+    # ─────────────────────────────
 
     def cargar_equipos(self):
 

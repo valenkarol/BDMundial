@@ -16,13 +16,15 @@ class CiudadView:
 
         self.ventana.geometry("700x500")
 
-        # LABEL
+        # ─────────────────────────────
+        # NOMBRE
+        # ─────────────────────────────
+
         tk.Label(
             self.ventana,
             text="Nombre Ciudad"
         ).pack(pady=5)
 
-        # ENTRY
         self.nombre = tk.Entry(
             self.ventana,
             width=40
@@ -30,13 +32,15 @@ class CiudadView:
 
         self.nombre.pack()
 
-        # LABEL
+        # ─────────────────────────────
+        # PAÍS
+        # ─────────────────────────────
+
         tk.Label(
             self.ventana,
             text="País"
         ).pack(pady=5)
 
-        # COMBOBOX
         self.combo_pais = ttk.Combobox(
             self.ventana,
             width=37,
@@ -47,14 +51,33 @@ class CiudadView:
 
         self.cargar_paises()
 
-        # BOTÓN
-        tk.Button(
-            self.ventana,
-            text="Guardar",
-            command=self.guardar_ciudad
-        ).pack(pady=10)
+        # ─────────────────────────────
+        # BOTONES
+        # ─────────────────────────────
 
+        frame_botones = tk.Frame(self.ventana)
+        frame_botones.pack(pady=10)
+
+        tk.Button(
+            frame_botones,
+            text="Guardar",
+            width=15,
+            command=self.guardar_ciudad
+        ).grid(row=0, column=0, padx=5)
+
+        tk.Button(
+            frame_botones,
+            text="Eliminar",
+            width=15,
+            bg="red",
+            fg="white",
+            command=self.eliminar
+        ).grid(row=0, column=1, padx=5)
+
+        # ─────────────────────────────
         # TABLA
+        # ─────────────────────────────
+
         self.tabla = ttk.Treeview(
             self.ventana,
             columns=("ID", "Ciudad", "País"),
@@ -73,6 +96,10 @@ class CiudadView:
 
         self.cargar_ciudades()
 
+    # ─────────────────────────────
+    # CARGAR PAÍSES
+    # ─────────────────────────────
+
     def cargar_paises(self):
 
         paises = PaisController.obtener_paises()
@@ -88,6 +115,10 @@ class CiudadView:
             nombres.append(pais[1])
 
         self.combo_pais["values"] = nombres
+
+    # ─────────────────────────────
+    # GUARDAR
+    # ─────────────────────────────
 
     def guardar_ciudad(self):
 
@@ -119,6 +150,40 @@ class CiudadView:
         self.nombre.delete(0, tk.END)
 
         self.cargar_ciudades()
+
+    # ─────────────────────────────
+    # ELIMINAR
+    # ─────────────────────────────
+
+    def eliminar(self):
+
+        seleccion = self.tabla.selection()
+
+        if not seleccion:
+
+            messagebox.showerror(
+                "Error",
+                "Seleccione una ciudad"
+            )
+
+            return
+
+        item = self.tabla.item(seleccion)
+
+        id_ciudad = item["values"][0]
+
+        CiudadController.eliminar_ciudad(id_ciudad)
+
+        messagebox.showinfo(
+            "Correcto",
+            "Ciudad eliminada"
+        )
+
+        self.cargar_ciudades()
+
+    # ─────────────────────────────
+    # CARGAR TABLA
+    # ─────────────────────────────
 
     def cargar_ciudades(self):
 

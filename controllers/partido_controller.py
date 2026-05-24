@@ -38,6 +38,23 @@ class PartidoController:
         conexion.commit()
 
         conexion.close()
+        
+    @staticmethod
+    def eliminar_partido(id_partido):
+        
+        conexion = conectar()
+        cursor = conexion.cursor()
+        
+        query = """
+        DELETE FROM partido
+        WHERE id_partido = %s
+        """
+        
+        cursor.execute(query, (id_partido,))
+        
+        conexion.commit()
+        
+        conexion.close()
 
     @staticmethod
     def obtener_partidos():

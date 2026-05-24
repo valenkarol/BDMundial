@@ -35,6 +35,24 @@ class EstadioController:
         conexion.commit()
 
         conexion.close()
+        
+    @staticmethod
+    def eliminar_estadio(id_estadio):
+           
+        conexion = conectar()
+           
+        cursor = conexion.cursor()
+           
+        query = """
+        DELETE FROM estadio
+        WHERE id_estadio = %s
+        """
+           
+        cursor.execute(query, (id_estadio,))
+           
+        conexion.commit()
+           
+        conexion.close() 
 
     @staticmethod
     def obtener_estadios():

@@ -50,6 +50,24 @@ class JugadorController:
         conexion.commit()
 
         conexion.close()
+        
+    @staticmethod
+    def eliminar_jugador(id_jugador):
+        
+        conexion = conectar()
+        
+        cursor = conexion.cursor()
+        
+        query = """
+        DELETE FROM jugador
+        WHERE id_jugador = %s
+        """
+        
+        cursor.execute(query, (id_jugador,))
+        
+        conexion.commit()
+        
+        conexion.close()
 
     @staticmethod
     def obtener_jugadores():

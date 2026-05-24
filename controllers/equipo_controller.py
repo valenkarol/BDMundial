@@ -41,6 +41,24 @@ class EquipoController:
         conexion.commit()
 
         conexion.close()
+        
+        
+    @staticmethod
+    def eliminar_equipo(id_equipo):
+        conexion = conectar()
+        
+        cursor = conexion.cursor()
+        
+        query = """
+        DELETE FROM equipo
+        WHERE id_equipo = %s
+        """
+        
+        cursor.execute(query, (id_equipo,))
+        
+        conexion.commit()
+        
+        conexion.close()
 
     @staticmethod
     def obtener_equipos():

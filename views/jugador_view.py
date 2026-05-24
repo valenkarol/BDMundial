@@ -16,15 +16,25 @@ class JugadorView:
 
         self.ventana.geometry("1000x700")
 
+        # ─────────────────────────────
         # CAMPOS
+        # ─────────────────────────────
+
         self.crear_campos()
 
+        # ─────────────────────────────
         # TABLA
+        # ─────────────────────────────
+
         self.crear_tabla()
 
         self.cargar_equipos()
 
         self.cargar_jugadores()
+
+    # ─────────────────────────────
+    # CREAR CAMPOS
+    # ─────────────────────────────
 
     def crear_campos(self):
 
@@ -56,7 +66,10 @@ class JugadorView:
 
             self.entries[texto] = entry
 
+        # ─────────────────────────────
         # EQUIPO
+        # ─────────────────────────────
+
         tk.Label(
             self.ventana,
             text="Equipo"
@@ -69,11 +82,32 @@ class JugadorView:
 
         self.combo_equipo.pack()
 
+        # ─────────────────────────────
+        # BOTONES
+        # ─────────────────────────────
+
+        frame_botones = tk.Frame(self.ventana)
+        frame_botones.pack(pady=10)
+
         tk.Button(
-            self.ventana,
+            frame_botones,
             text="Guardar",
+            width=15,
             command=self.guardar_jugador
-        ).pack(pady=10)
+        ).grid(row=0, column=0, padx=5)
+
+        tk.Button(
+            frame_botones,
+            text="Eliminar",
+            width=15,
+            bg="red",
+            fg="white",
+            command=self.eliminar
+        ).grid(row=0, column=1, padx=5)
+
+    # ─────────────────────────────
+    # CREAR TABLA
+    # ─────────────────────────────
 
     def crear_tabla(self):
 
@@ -101,8 +135,13 @@ class JugadorView:
 
         self.tabla.pack(
             fill="both",
-            expand=True
+            expand=True,
+            pady=20
         )
+
+    # ─────────────────────────────
+    # CARGAR EQUIPOS
+    # ─────────────────────────────
 
     def cargar_equipos(self):
 
@@ -119,6 +158,10 @@ class JugadorView:
             nombres.append(e[1])
 
         self.combo_equipo["values"] = nombres
+
+    # ─────────────────────────────
+    # GUARDAR
+    # ─────────────────────────────
 
     def guardar_jugador(self):
 
@@ -176,6 +219,42 @@ class JugadorView:
                 "Error",
                 "Datos inválidos"
             )
+
+    # ─────────────────────────────
+    # ELIMINAR
+    # ─────────────────────────────
+
+    def eliminar(self):
+
+        seleccion = self.tabla.selection()
+
+        if not seleccion:
+
+            messagebox.showerror(
+                "Error",
+                "Seleccione un jugador"
+            )
+
+            return
+
+        item = self.tabla.item(seleccion)
+
+        id_jugador = item["values"][0]
+
+        JugadorController.eliminar_jugador(
+            id_jugador
+        )
+
+        messagebox.showinfo(
+            "Correcto",
+            "Jugador eliminado"
+        )
+
+        self.cargar_jugadores()
+
+    # ─────────────────────────────
+    # CARGAR TABLA
+    # ─────────────────────────────
 
     def cargar_jugadores(self):
 

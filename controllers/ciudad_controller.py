@@ -20,6 +20,22 @@ class CiudadController:
         conexion.commit()
 
         conexion.close()
+        
+    @staticmethod
+    def eliminar_ciudad(id_ciudad):
+        conexion = conectar()
+        cursor = conexion.cursor()
+        
+        query = """
+        DELETE FROM ciudad
+        WHERE id_ciudad = %s
+        """
+        
+        cursor.execute(query, (id_ciudad,))
+        
+        conexion.commit()
+        
+        conexion.close()
 
     @staticmethod
     def obtener_ciudades():
