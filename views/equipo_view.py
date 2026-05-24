@@ -68,7 +68,7 @@ class EquipoView:
         self.combo_grupo.pack()
 
         # ─────────────────────────────
-        # DIRECTOR TÉCNICO
+        # DIRECTOR
         # ─────────────────────────────
 
         tk.Label(
@@ -99,6 +99,7 @@ class EquipoView:
 
         self.combo_pais.pack()
 
+        # CARGAR DATOS
         self.cargar_datos()
 
         # ─────────────────────────────
@@ -135,18 +136,22 @@ class EquipoView:
                 "Equipo",
                 "Confederación",
                 "Grupo",
-                "Director"
+                "Director",
+                "País"
             ),
             show="headings"
         )
 
-        for col in (
+        columnas = (
             "ID",
             "Equipo",
             "Confederación",
             "Grupo",
-            "Director"
-        ):
+            "Director",
+            "País"
+        )
+
+        for col in columnas:
 
             self.tabla.heading(
                 col,
@@ -212,7 +217,7 @@ class EquipoView:
 
         self.combo_director["values"] = lista_directores
 
-        # PAÍSES
+        # PAISES
         paises = PaisController.obtener_paises()
 
         self.pais_dict = {}
@@ -233,47 +238,56 @@ class EquipoView:
 
     def guardar_equipo(self):
 
-        nombre = self.nombre.get()
+        try:
 
-        conf = self.combo_confederacion.get()
+            nombre = self.nombre.get().strip()
 
-        grupo = self.combo_grupo.get()
+            conf = self.combo_confederacion.get()
 
-        director = self.combo_director.get()
+            grupo = self.combo_grupo.get()
 
-        pais = self.combo_pais.get()
+            director = self.combo_director.get()
 
-        if (
-            nombre == ""
-            or conf == ""
-            or grupo == ""
-            or director == ""
-            or pais == ""
-        ):
+            pais = self.combo_pais.get()
 
-            messagebox.showerror(
-                "Error",
-                "Complete todos los campos"
+            if (
+                nombre == ""
+                or conf == ""
+                or grupo == ""
+                or director == ""
+                or pais == ""
+            ):
+
+                messagebox.showerror(
+                    "Error",
+                    "Complete todos los campos"
+                )
+
+                return
+
+            EquipoController.insertar_equipo(
+                nombre,
+                self.conf_dict[conf],
+                self.grupo_dict[grupo],
+                self.director_dict[director],
+                self.pais_dict[pais]
             )
 
-            return
+            messagebox.showinfo(
+                "Correcto",
+                "Equipo guardado"
+            )
 
-        EquipoController.insertar_equipo(
-            nombre,
-            self.conf_dict[conf],
-            self.grupo_dict[grupo],
-            self.director_dict[director],
-            self.pais_dict[pais]
-        )
+            self.nombre.delete(0, tk.END)
 
-        messagebox.showinfo(
-            "Correcto",
-            "Equipo guardado"
-        )
+            self.cargar_equipos()
 
-        self.nombre.delete(0, tk.END)
+        except Exception as e:
 
-        self.cargar_equipos()
+            messagebox.showerror(
+                "Error SQL",
+                str(e)
+            )
 
     # ─────────────────────────────
     # ELIMINAR
@@ -281,31 +295,40 @@ class EquipoView:
 
     def eliminar(self):
 
-        seleccion = self.tabla.selection()
+        try:
 
-        if not seleccion:
+            seleccion = self.tabla.selection()
 
-            messagebox.showerror(
-                "Error",
-                "Seleccione un equipo"
+            if not seleccion:
+
+                messagebox.showerror(
+                    "Error",
+                    "Seleccione un equipo"
+                )
+
+                return
+
+            item = self.tabla.item(seleccion)
+
+            id_equipo = item["values"][0]
+
+            EquipoController.eliminar_equipo(
+                id_equipo
             )
 
-            return
+            messagebox.showinfo(
+                "Correcto",
+                "Equipo eliminado"
+            )
 
-        item = self.tabla.item(seleccion)
+            self.cargar_equipos()
 
-        id_equipo = item["values"][0]
+        except Exception as e:
 
-        EquipoController.eliminar_equipo(
-            id_equipo
-        )
-
-        messagebox.showinfo(
-            "Correcto",
-            "Equipo eliminado"
-        )
-
-        self.cargar_equipos()
+            messagebox.showerror(
+                "Error SQL",
+                str(e)
+            )
 
     # ─────────────────────────────
     # CARGAR TABLA
